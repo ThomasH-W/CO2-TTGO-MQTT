@@ -1,0 +1,11 @@
+#######################################
+# Syntax Coloring Map for ObjectButton
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+MqttClient2	KEYWORD1
+dot	    KEYWORD1
+dash	KEYWORD1
