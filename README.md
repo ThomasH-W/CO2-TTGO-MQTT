@@ -8,7 +8,24 @@ In addition you can control the Sensor module as it is subscribing to a specific
 <br><br>
 <h2> User Interface
 </h2>
-
+GUI 1<br>
+![GitHub Logo](./README/images/TTGO-1.jpg)
+<br>
+GUI 2<br>
+![GitHub Logo](./README/images/TTGO-2.jpg)
+<br>
+GUI 3<br>
+![GitHub Logo](./README/images/TTGO-3.jpg)
+<br>
+GUI 4<br>
+![GitHub Logo](./README/images/TTGO-4.jpg)
+<br>
+GUI 5<br>
+![GitHub Logo](./README/images/TTGO-5.jpg)
+<br>
+GUI 6<br>
+![GitHub Logo](./README/images/TTGO-6.jpg)
+<br>
 
 <br><br>
 <h2> CO2 Sensor
