@@ -4,6 +4,8 @@
 #ifndef MAIN_h
 #define MAIN_h
 
+// https://github.com/Locoduino/RingBuffer
+
 #include "Arduino.h"
 #include "user_config.h"
 
@@ -27,7 +29,7 @@ enum States
   ST_GUI_6,       // 6 Trend Graph
   ST_CALIBRATION, // 6 Calibration incl. Count Down
 };
-#define ST_MAX ST_CALIBRATION  // roll-over when switching through modes
+#define ST_MAX ST_CALIBRATION // roll-over when switching through modes
 
 struct sensor_data_struct
 {
@@ -41,19 +43,18 @@ struct sensor_data_struct
   float humidity = 0;
   int co2_ppm = 0, co2_ppm_last = 0;
   int co2sim = 0;
-  char rssiChar[20]; // wifi signal strength
+  char rssiChar[20];    // wifi signal strength
   int rssiLevel = 0;    // wifi signal strength
-  char ssidChar[20]; // SSID - wlan name
-  char IPChar[20]; // SSID - wlan name
-  char co2FWChar[20]; // CO2 firmware
+  char ssidChar[20];    // SSID - wlan name
+  char IPChar[20];      // SSID - wlan name
+  char co2FWChar[20];   // CO2 firmware
   char co2AutoChar[20]; // CO2 firmware
-  char owIDChar[20]; // 1 Wire ID
+  char owIDChar[20];    // 1 Wire ID
 };
 
 void setup_wifi(void);
 void displayReset(void);
 void displayDebugPrint(const char *message);
 void displayDebugPrintln(const char *message);
-
 
 #endif

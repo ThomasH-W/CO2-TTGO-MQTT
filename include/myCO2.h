@@ -15,7 +15,7 @@
 #define SCAN_SECONDS_CO2 30
 #define CALIBRATE_SECONDS 40 // timeElapse = 12e5; //  20 minutes in milliseconds
 
-// Nutzung der Schnittstelle UART2 an den Default-Pins RX 16, TX 17
+// Nutzung der Schnittstelle UART2
 #define RX2 26 //16 is used for OLED_RST !
 #define TX2 27
 
