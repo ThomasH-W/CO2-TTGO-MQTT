@@ -28,7 +28,7 @@ class myNTP // define class
 public:
   myNTP(void); // constructor, which is used to create an instance of the class
   bool begin(void);
-  void loop(void);
+  void loop(char *timeOfDayChar,char *dateChar);
   void value(char *bufTime, char *bufDate);
   char *localTime();
   void status(char *value);

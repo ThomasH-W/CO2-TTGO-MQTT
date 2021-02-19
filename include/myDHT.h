@@ -9,8 +9,7 @@
 #ifndef MYDHT_h
 #define MYDHT_h
 
-// #include "DHT.h"
-#include <esp32DHT.h>
+#include "DHT.h"
 #define DHTPIN 25 // Digital pin connected to the DHT sensor
 
 // Uncomment whatever type you're using!
@@ -33,7 +32,7 @@ class myDHT // define class
 public:
   myDHT(void); // constructor, which is used to create an instance of the class
   bool begin(void);
-  void loop(void);
+  void loop(float *temp, char *cValueHumi, float *humi, char *cValueTemp);
   float valueTemp(void);
   float valueHumi(void);
   void status(char *value);

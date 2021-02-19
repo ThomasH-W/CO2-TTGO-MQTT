@@ -28,8 +28,8 @@ class myCO2 // define class
 {
 public:
   myCO2(void); // constructor, which is used to create an instance of the class
-  void loop(void);
-  void begin(void);
+  void loop(int *iValue, char *cValue);
+  void begin(char *cValue);
   void calibrateStart(void);
   void calibrateEnd(void);
   long calibrateTimer(void);

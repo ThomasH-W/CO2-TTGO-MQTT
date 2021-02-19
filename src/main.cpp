@@ -1,17 +1,19 @@
 /*
   main.cpp
-    Date  2021-02-07
-    Version 0.1
+    Date  2021-02-16
+    Version 0.2
 
   ToDo
     - calibration
-    - display 1: only CO2
-    - display 2: CO2 + temp
+    - admin data
     - indicator: WLAN, heartbeat
-    - wlan-reconnect ?
+    - co2 levels - color
 */
 
 #include "main.h"
+
+#include "myDHT.h"
+myDHT myDHT22;
 
 #include <WiFi.h>
 #include <Wire.h>
@@ -29,18 +31,12 @@ WiFiMulti wifiMulti;
 #include "myCO2.h"
 myCO2 myCO2Sensor;
 
-#include "myDHT.h"
-myDHT myDHT22;
-
 #include "myNTP.h"
 myNTP myNtp;
-char timeOfDayChar[20];
-char dateChar[20];
-unsigned long lastNtp=0;
-
+unsigned long lastNtp = 0;
 
 #include "myMqttClient.h"
-    MqttClient2 myMqttClient2;
+MqttClient2 myMqttClient2;
 int jsonCountOld = 0;
 
 #include "myDisplay.h"
@@ -50,20 +46,13 @@ char statusChar[50];
 #include "Button2.h"
 Button2 buttonA = Button2(BUTTON_A_PIN);
 Button2 buttonB = Button2(BUTTON_B_PIN);
+void click(Button2 &btn);
 
 long lastMsg = 0;
 long lastMsgCo2 = 0;
 char msg[100];
 int value = 0;
-
-float temperature = 0;
-char tempChar[20];
-float humidity = 0;
-char humiChar[20];
-int co2_ppm = 0, co2_ppm_last = 0;
-char co2Char[20];
-int co2sim = 0;
-char co2simChar[20];
+sensor_data_struct sensorData;
 
 // x,y == coords of centre of arc
 // start_angle = 0 - 359
@@ -85,12 +74,6 @@ unsigned long previousMillis = 0, previousMillisRssi = 0, intervalRssiLoop = 100
 const int RSSI_MAX = -50;  // define maximum strength of signal in dBm
 const int RSSI_MIN = -100; // define minimum strength of signal in dBm
 
-void setup_wifi(void);
-void displayReset(void);
-void displayDebugPrint(const char *message);
-void displayDebugPrintln(const char *message);
-void click(Button2 &btn);
-
 // ----------------------------------------------------------------------------------------
 void setup()
 {
@@ -108,7 +91,7 @@ void setup()
   myDisplay1.println(statusChar);
 
   myDisplay1.println("> CO2 Sensor");
-  myCO2Sensor.begin();
+  myCO2Sensor.begin(sensorData.co2FWChar);
   myCO2Sensor.status(statusChar);
   myDisplay1.println(statusChar);
 
@@ -156,17 +139,22 @@ void setup_wifi()
   server.begin();
   Serial.println("HTTP server started");
 
-  Serial.println("");
-  Serial.print("WiFi connected - IP address: ");
-  Serial.println(WiFi.localIP());
+  Serial.print("> WiFi SSID: ");
+  strncpy(sensorData.ssidChar, WiFi.SSID().c_str(), 15);
+  Serial.println(sensorData.ssidChar);
+
+  Serial.print("> WiFi IP address: ");
+  strncpy(sensorData.IPChar, WiFi.localIP().toString().c_str(), 15);
+  Serial.println(sensorData.IPChar);
+
   Serial.println("> setup_wifi complete.");
   myDisplay1.println(" connected");
 } // end of function
 
 // ----------------------------------------------------------------------------------------
+// check which command has been received and assign value
 void mqttcmd_read(char name[], int value)
 {
-
   if (!strcmp(name, "arc_x"))
   {
     arc_x = value;
@@ -204,8 +192,8 @@ void mqttcmd_read(char name[], int value)
 
   if (!strcmp(name, "co2sim"))
   {
-    co2sim = value;
-    dtostrf(co2sim, 1, 0, co2simChar);
+    sensorData.co2sim = value;
+    dtostrf(sensorData.co2sim, 1, 0, sensorData.co2simChar);
   }
 
   if (!strcmp(name, "calibrate"))
@@ -221,6 +209,7 @@ void mqttcmd_read(char name[], int value)
 } // end of function
 
 // ----------------------------------------------------------------------------------------
+// retrieve last message for subscribed topics
 void mqttcmd_loop()
 {
   json_cmnd_struct jsonCmnd = myMqttClient2.command();
@@ -236,7 +225,7 @@ void mqttcmd_loop()
     Serial.println(" < ");
     mqttcmd_read(jsonCmnd.name, jsonCmnd.value);        // do something whith the cmnd
     myMqttClient2.publishStat("result", jsonCmnd.name); // moduel to proivde feedback than mqtt cmnd has been processed
-    displayDebugPrint("mq> ");
+    displayDebugPrint("mqtt> ");
     displayDebugPrint(jsonCmnd.name);
     displayDebugPrint(" / ");
     char PufferChar1[20];
@@ -262,68 +251,6 @@ void displayDebugPrintln(const char *message)
   Serial.println(message);
 } // end of function
 
-// ----------------------------------------------------------------------------------------
-void dht22_loop()
-{
-  long now = millis();
-  if (now - lastMsg > 20000)
-  {
-    lastMsg = now;
-    // temperature = myOneWireSensor.value();
-    temperature = myDHT22.valueTemp();
-    dtostrf(temperature, 4, 1, tempChar);
-
-    myMqttClient2.publishTemp(tempChar);
-    displayDebugPrint("DHT22 temp: ");
-    displayDebugPrint(tempChar);
-
-    // temperature = myOneWireSensor.value();
-    humidity = myDHT22.valueHumi();
-    dtostrf(humidity, 4, 1, humiChar);
-
-    myMqttClient2.publishHumi(humiChar);
-    displayDebugPrint(" / humi: ");
-    displayDebugPrintln(humiChar);
-
-    displayUpdate = true;
-  }
-
-} // end of function
-
-// ----------------------------------------------------------------------------------------
-void ntp_loop()
-{
-  long now = millis();
-  if (now - lastNtp > 20000)
-  {
-    lastNtp = now;
-    myNtp.value(timeOfDayChar, dateChar);
-    displayDebugPrint(">ntp time: ");
-    displayDebugPrint(timeOfDayChar);
-    displayDebugPrint("  / date: ");
-    displayDebugPrintln(dateChar);
-  }
-} // end of fuction
-
-// ----------------------------------------------------------------------------------------
-void co2_loop()
-{
-  long now = millis();
-  if (now - lastMsgCo2 > 20000)
-  {
-    lastMsgCo2 = now;
-    co2_ppm_last = co2_ppm;
-    co2_ppm = myCO2Sensor.value();
-    dtostrf(co2_ppm, 1, 0, co2Char);
-
-    myMqttClient2.publishCO2(co2Char);
-    displayDebugPrint("> CO2: ");
-    displayDebugPrintln(co2Char);
-    displayUpdate = true;
-  }
-
-} // end of function
-
 // ---------------------------------------------------------------------------------------
 void displayReset(void)
 {
@@ -334,28 +261,47 @@ void displayReset(void)
 // ---------------------------------------------------------------------------------------
 void displayLoop(void)
 {
+  /*  ST_BOOT,        // 0 pure text
+      ST_GUI_1,       // 1 Time/WLAN -- CO2 -- Temp/Humi
+      ST_GUI_2,       // 2 CO2 -- Temp
+      ST_GUI_3,       // 3 CO2 Text w/ color
+      ST_GUI_4,       // 4 CO2 Gauge
+      ST_GUI_5,       // 5 Admin: WiFi, Sensor Version, Sensor ID
+      ST_CALIBRATION, // 6 Calibration incl. Count Down
+*/
   if (mode != oldMode)
   {
     myDisplay1.clear();
     oldMode = mode;
+    displayUpdate = true;
   }
+
   if (displayUpdate == true)
   {
     switch (mode)
     {
-    case ST_GUI_1:                        // 3
-      myDisplay1.Gui1(co2Char, tempChar); // text
+    case ST_GUI_1:                 // 3
+      myDisplay1.Gui1(sensorData); // text
       break;
     case ST_GUI_2: // 4
       myDisplay1.clear();
-      myDisplay1.Gui2(0, 4000, co2_ppm); // gauge left/right
+      myDisplay1.Gui2(sensorData); // gauge left/right
       break;
-    case ST_GUI_3:                        // 5 boot mode
-      myDisplay1.Gui3(co2Char, tempChar); // wifi signal
+    case ST_GUI_3:                 // 5 boot mode
+      myDisplay1.Gui3(sensorData); // wifi signal
       break;
     case ST_GUI_4: // 6 boot mode
       myDisplay1.clear();
-      myDisplay1.Gui5(arc_x, arc_y, arc_sa, arc_sc, arc_rx, arc_ry, arc_w, arc_colour); // gauge design test
+      myDisplay1.Gui4(0, 3000, sensorData.co2_ppm, sensorData);
+      Serial.print("> GUI4: ");
+      Serial.println(sensorData.co2_ppm);
+      // myDisplay1.Gui7(arc_x, arc_y, arc_sa, arc_sc, arc_rx, arc_ry, arc_w, arc_colour); // gauge design test
+      break;
+    case ST_GUI_5:                 // 5 Admin
+      myDisplay1.Gui5(sensorData); // wifi signal
+      break;
+    case ST_GUI_6:                 // 5 Trend Graph
+      myDisplay1.Gui6(sensorData); // wifi signal
       break;
     case ST_CALIBRATION: // 6 boot mode
       myDisplay1.clear();
@@ -379,41 +325,33 @@ void displayLoop(void)
  * This is approximate percentage calculation of RSSI
  * WiFi Signal Strength Calculation
  * Written Aug 08, 2019 at 21:45 in Ajax, Ontario, Canada
+-30 dBm	Max achievable signal strength. The client can only be a few feet from the AP to achieve this.
+-67 dBm	Minimum signal strength for applications that require very reliable, timely packet delivery.	VoIP/VoWiFi, streaming video
+-70 dBm	Minimum signal strength for reliable packet delivery.	Email, web
+-80 dBm	Minimum signal strength for basic connectivity. Packet delivery may be unreliable.	N/A
+-90 dBm	Approaching or drowning in the noise floor. Any functionality is highly unlikely.
  */
 
 // ----------------------------------------------------------------------------------------
 int dBmtoPercentage(int dBm)
 {
-  int quality;
-  if (dBm <= RSSI_MIN)
-  {
-    quality = 0;
-  }
-  else if (dBm >= RSSI_MAX)
-  {
-    quality = 100;
-  }
-  else
-  {
-    quality = 2 * (dBm + 100);
-  }
+  Serial.print(" (");
+  Serial.print(dBm);
+  Serial.print(" db) ");
+  int quality = 0;
+  if (dBm > -90) // s/b be done differetnly with else / if
+    quality = 1;
+  if (dBm > -80)
+    quality = 2;
+  if (dBm > -70)
+    quality = 3;
+  if (dBm > -67)
+    quality = 4;
+  if (dBm > -30)
+    quality = 5;
 
   return quality;
 } // end of fuction dBmtoPercentage
-
-// -----------------------------------------------------------------------------------------
-void wifiRSSIloop()
-{
-  unsigned long currentMillisLoop = millis();
-
-  if (currentMillisLoop - previousMillisRssi > intervalRssiLoop)
-  {
-    Serial.print(dBmtoPercentage(WiFi.RSSI())); //Signal strength in %
-    Serial.print("% )");
-    previousMillis = millis();
-  } // end of timer
-
-} // end of fuction
 
 // ----------------------------------------------------------------------------------------
 void click(Button2 &btn)
@@ -426,7 +364,6 @@ void click(Button2 &btn)
       mode = ST_BOOT;
     Serial.print("new mode: ");
     Serial.println(mode);
-    mqttUpdate = true;
   }
   else if (btn == buttonB)
   {
@@ -434,26 +371,63 @@ void click(Button2 &btn)
   }
 } // end of fuction
 
-
-  // ----------------------------------------------------------------------------------------
-  void loop()
+// ----------------------------------------------------------------------------------------
+void pullData_loop()
+{
+  long now = millis();
+  if (now - lastMsgCo2 > LOOP_SECONDS_DATA * 1000)
   {
 
-    displayLoop();
+    myCO2Sensor.loop(&sensorData.co2_ppm, sensorData.co2Char); // every 10sec read val, every 30s reconnect
+    myMqttClient2.publishCO2(sensorData.co2Char);
+    displayDebugPrint("> CO2: ");
+    displayDebugPrintln(sensorData.co2Char);
 
-    myMqttClient2.loop(); //client.loop(); + reconnect if required
-    myCO2Sensor.loop();   // every 10sec read val, every 30s reconnect
-    myDHT22.loop();       // every 10sec read val
-    myNtp.loop();         // every 10sec read val
-    // AsyncElegantOTA.loop();
+    myDHT22.loop(&sensorData.temperature, sensorData.tempChar, &sensorData.humidity, sensorData.humiChar); // every 10sec read val
+    myMqttClient2.publishTemp(sensorData.tempChar);
+    displayDebugPrint("DHT22 temp: ");
+    displayDebugPrint(sensorData.tempChar);
 
-    mqttcmd_loop(); // fetch +process data from mqtt client
-    dht22_loop();   // every 20 sec: fetch +process data from 1 Wire sensor
-    co2_loop();     // every 20 sec: fetch +process data from CO2 Wire sensor
-    ntp_loop();     // every 20 sec: fetch +process data from CO2 Wire sensor
+    myMqttClient2.publishHumi(sensorData.humiChar);
+    displayDebugPrint(" / humi: ");
+    displayDebugPrintln(sensorData.humiChar);
 
-    buttonA.loop();
-    buttonB.loop();
+    myNtp.loop(sensorData.timeOfDayChar, sensorData.dateChar); // every 10sec read val
+    displayDebugPrint("> ntp time: ");
+    displayDebugPrint(sensorData.timeOfDayChar);
+    displayDebugPrint("  / date: ");
+    displayDebugPrintln(sensorData.dateChar);
 
-    yield();
-  } // end of function
+    displayDebugPrint("> Wifi.RSSI: ");
+    sensorData.rssiLevel = dBmtoPercentage(WiFi.RSSI());
+    dtostrf(sensorData.rssiLevel, 1, 0, sensorData.rssiChar); // 5 digits, no decimal
+    displayDebugPrintln(sensorData.rssiChar);                 //Signal strength in %
+
+    displayUpdate = true;
+    lastMsgCo2 = millis();
+  }
+
+} // end of function
+
+// ----------------------------------------------------------------------------------------
+void loop()
+{
+
+  if (wifiMulti.run() != WL_CONNECTED)
+  {
+    setup_wifi();
+  }
+
+  pullData_loop(); // retrieve update form sensors every 20 seconds
+
+  myMqttClient2.loop(); //client.loop(); + reconnect if required
+  mqttcmd_loop();       // fetch + process data for subsribed mqtt topics
+  // AsyncElegantOTA.loop();
+
+  buttonA.loop();
+  buttonB.loop();
+
+  displayLoop(); // mqtt of button may demand to change GUI
+
+  yield();
+} // end of function

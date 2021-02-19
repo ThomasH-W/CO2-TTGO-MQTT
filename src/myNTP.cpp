@@ -62,16 +62,30 @@ char *myNTP::localTime()
 }
 
 // ------------------------------------------------------------------------------------------------------------------------
-void myNTP::loop(void)
+void myNTP::loop(char *timeOfDayChar, char *dateChar)
 {
+  char tmpChar[20];
+
   currentMillisLoop = millis();
   if (currentMillisLoop - previousMillis > intervalLoop)
   {
     // Serial.print("t");
     if (sensorFound == true)
     {
-      Serial.print("NTP-loop: ");
-      Serial.println(localTime());
+      Serial.print("NTP-loop> ");
+      // Serial.println(localTime());
+
+      getLocalTime(&tm, 50);
+
+      strftime(tmpChar, sizeof(tmpChar), "%R", &tm);
+      Serial.print(" Time: ");
+      Serial.print(timeOfDayChar);
+      strncpy(timeOfDayChar, tmpChar, sizeof(tmpChar)); // dest, src, size
+
+      strftime(tmpChar, sizeof(tmpChar), "%d.%m.", &tm);
+      Serial.print(" / Date: ");
+      Serial.println(tmpChar);
+      strncpy(dateChar, tmpChar, sizeof(tmpChar)); // dest, src, size
     }
     previousMillis = millis();
   } // end of timer

@@ -19,7 +19,7 @@ myCO2::myCO2(void)
 } // end of function
 
 // ------------------------------------------------------------------------------------------------------------------------
-void myCO2::begin(void)
+void myCO2::begin(char *cValue)
 {
   SerialCO2.begin(MHZ19_BAUDRATE, MHZ19_PROTOCOL, RX2, TX2);
   // SerialCO2.begin(MHZ19_BAUDRATE);
@@ -40,6 +40,7 @@ void myCO2::begin(void)
   {
     sensorFound = true;
     strncpy(statusChar, mhz19_version, sizeof(mhz19_version));
+    strncpy(cValue, mhz19_version, sizeof(mhz19_version));
     Serial.print("MH-Z19B Firmware Version: ");
     for (int i = 0; i < 4; i++)
     {
@@ -57,7 +58,7 @@ void myCO2::begin(void)
 } // end of function
 
 // ------------------------------------------------------------------------------------------------------------------------
-void myCO2::loop(void)
+void myCO2::loop(int *iValue, char *cValue)
 {
   currentMillisLoop = millis();
   if (currentMillisLoop - previousMillis > intervalLoop)
@@ -69,8 +70,14 @@ void myCO2::loop(void)
       if (mhz19bCalibration == false)
       {
         Serial.print(" reading CO2 ");
+        
         co2_ser = mhz19b.getCO2();
+        if (co2_ser > MHZ19_RANGE)
+          co2_ser = 0;
+        *iValue = co2_ser;
         Serial.print(co2_ser);
+        dtostrf(co2_ser, 5, 0, cValue); // 5 digits, no decimal
+
         Serial.print(" / temp ");
         temp_mh = mhz19b.getTemperature();
         Serial.println(temp_mh);
@@ -78,6 +85,8 @@ void myCO2::loop(void)
       }
       else // calibration is running
       {
+        co2_ser = 1;
+        strcpy(cValue, "cali");
         Serial.print("calibration ending in ");
         calibrateTimer();
         Serial.println(statusChar);
@@ -85,6 +94,8 @@ void myCO2::loop(void)
     }
     else
     {
+      co2_ser = 0;
+      strcpy(cValue, "----");
       Serial.println("no sensor ");
     }
     previousMillis = millis();
@@ -94,7 +105,7 @@ void myCO2::loop(void)
   {
     if (sensorFound == false)
     {
-      begin();
+      begin(cValue);
     }
     previousMillisScan = millis();
   } // end of timer
