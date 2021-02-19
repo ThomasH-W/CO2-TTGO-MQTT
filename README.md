@@ -26,10 +26,13 @@ In addition you can control the Sensor module as it is subscribing to a specific
 
 
 ## CO2 Sensor
-
-
+MHZ19B
+Two good German resources which helped me to get started:
+https://unsinnsbasis.de/co2-sensor-mhz19b/
+http://steinlaus.de/stinkt-das-hier-teil-2-mit-dem-winsen-mh-z19b/#comment-18510
 <br><br>
 ## Humidity and Temperature Sensor
+The DHT22 is measuring both while using only one wire for data submission. As an alternative BME280 might be used.
 
 <br><br>
 ## Wiring
@@ -40,3 +43,8 @@ In addition you can control the Sensor module as it is subscribing to a specific
 
 <br><br>
 ## Configuration
+
+
+<br><br>
+## ToDo
+- Calibration   
