@@ -24,7 +24,7 @@ GUI 5<br>
 ![GitHub Logo](README/images/TTGO-5.jpg)
 <br>
 GUI 6<br>
-![GitHub Logo](README/images/TTGO-6.jpg)
+[[README/images/TTGO-6.jpg]]
 <br>
 
 <br><br>
