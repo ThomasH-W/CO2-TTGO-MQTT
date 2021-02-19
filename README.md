@@ -9,7 +9,7 @@ In addition you can control the Sensor module as it is subscribing to a specific
 <h2> User Interface
 </h2>
 GUI 1<br>
-![GitHub Logo](README/images/TTGO-1.jpg)
+![TTGO-1](README/images/TTGO-1.jpg)
 <br>
 GUI 2<br>
 ![GitHub Logo](README/images/TTGO-2.jpg)
