@@ -8,7 +8,7 @@ In addition you can control the Sensor module as it is subscribing to a specific
 <br><br>
 <h2> User Interface
 </h2>
-![Kiku](images/TTGO-1.jpg)
+![Kiku](./images/TTGO-1.jpg)
 GUI 1<br>
 ![TTGO-1](images/TTGO-1.jpg)
 <br>
@@ -22,10 +22,13 @@ GUI 4<br>
 ![GitHub Logo](images/TTGO-4.jpg)
 <br>
 GUI 5<br>
-![GitHub Logo](/images/TTGO-5.jpg)
+![GitHub Logo](./images/TTGO-5.jpg)
 <br>
 GUI 6<br>
 [[images/TTGO-6.jpg]]
+<br>
+GUI 6<br>
+[[./images/TTGO-6.jpg]]
 <br>
 
 <br><br>
