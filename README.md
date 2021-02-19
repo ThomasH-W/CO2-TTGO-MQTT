@@ -8,6 +8,7 @@ In addition you can control the Sensor module as it is subscribing to a specific
 <br><br>
 <h2> User Interface
 </h2>
+![Kiku](images/TTGO-1.jpg)
 GUI 1<br>
 ![TTGO-1](images/TTGO-1.jpg)
 <br>
