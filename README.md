@@ -20,7 +20,7 @@ Settings for this GUI: mode = 1
 
 ![GitHub Logo](README/images/TTGO-2.jpg)
 
-Settings for this GUI: mode = 1
+Settings for this GUI: mode = 2
 
 ### GUI 3: CO2 only - color depending on level
 
@@ -46,6 +46,12 @@ Settings for this GUI: mode = 5
 
 Settings for this GUI: mode = 6
 
+### GUI 0: Boot
+
+![GitHub Logo](README/images/TTGO-Boot.jpg)
+
+Settings for this GUI: mode = 0
+
 ### NodeRED
 
 ![GitHub Logo](README/images/TTGO-NodeRED.png)
@@ -65,7 +71,7 @@ The DHT22 is measuring both while using only one wire for data submission. As an
 
 ### CO2 Sensor / MHZ19B
 
-![MHZ19B](./images/TTGO-MHZ19B-PIN.png)
+![MHZ19B](README/images/TTGO-MHZ19B-PIN.png)
 
 | ESP PIN | ESP Name | MHZ19B Name |
 | ------- | -------- | ----------- |
@@ -77,7 +83,7 @@ The DHT22 is measuring both while using only one wire for data submission. As an
 
 ### Temp/Humidity Sensor / DHT22
 
-![DHT22](./images/TTGO-DHT22-PIN.png)
+![DHT22](README/images/TTGO-DHT22-PIN.png)
 
 | ESP PIN | ESP Name | DHT22 Name |
 | ------- | -------- | ---------- |
