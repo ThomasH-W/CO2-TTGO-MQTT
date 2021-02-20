@@ -83,7 +83,11 @@ Copy the files from
 - .pio\libdeps\TTGO-MQTT-lora32-v1\TFT_eSPI
 
 ### WiFi + MQTT Credentials
-Copy included\user_config_override_sample.h to included\user_config_override.h
+Copy sample
+- include\user_config_override_sample.h 
+<br>to <br>
+- included\user_config_override.h
+
 Edit the file and inject your credentials.
 
 <br><br>
