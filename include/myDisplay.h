@@ -25,7 +25,7 @@ public:
   void println(const char *msg);
   void getScreenSize(void);
   int version(void);
-  void Text(const char *co2Char, const char *tempChar);
+   void Text(const char *co2Char, const char *tempChar);
   void Gui1(sensor_data_struct sensorData);
   void Gui2(sensor_data_struct sensorData);
   void Gui3(sensor_data_struct sensorData);
@@ -49,6 +49,8 @@ private:
   void gaugeLeft(int min, int max, int curlevel);
   void gaugeRight(int min, int max, int curlevel);
   void wfiSignal(int my_x, int my_y, int my_max, int level);
+  void drawTrend(sensor_data_struct sData);
+  void drawTrendRing(sensor_data_struct sData);
 };
 
 #endif

@@ -48,6 +48,9 @@ Button2 buttonA = Button2(BUTTON_A_PIN);
 Button2 buttonB = Button2(BUTTON_B_PIN);
 void click(Button2 &btn);
 
+
+
+
 long lastMsg = 0;
 long lastMsgCo2 = 0;
 char msg[100];
@@ -378,7 +381,7 @@ void pullData_loop()
   if (now - lastMsgCo2 > LOOP_SECONDS_DATA * 1000)
   {
 
-    myCO2Sensor.loop(&sensorData.co2_ppm, sensorData.co2Char); // every 10sec read val, every 30s reconnect
+    myCO2Sensor.loop(&sensorData); // every 10sec read val, every 30s reconnect
     myMqttClient2.publishCO2(sensorData.co2Char);
     displayDebugPrint("> CO2: ");
     displayDebugPrintln(sensorData.co2Char);

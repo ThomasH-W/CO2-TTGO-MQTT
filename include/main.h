@@ -8,6 +8,7 @@
 
 #include "Arduino.h"
 #include "user_config.h"
+#include <RingBuf.h>
 
 #define ADC_EN 14 //ADC_EN is the ADC detection enable port
 #define ADC_PIN 34
@@ -50,6 +51,8 @@ struct sensor_data_struct
   char co2FWChar[20];   // CO2 firmware
   char co2AutoChar[20]; // CO2 firmware
   char owIDChar[20];    // 1 Wire ID
+  RingBuf<int, 230> myCo2Buffer;
+  RingBuf<int, 230> myTempBuffer;
 };
 
 void setup_wifi(void);

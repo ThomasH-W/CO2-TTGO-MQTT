@@ -241,8 +241,77 @@ void myDisplay::Gui5(sensor_data_struct sData)
 } // end of function
 
 // ------------------------------------------------------------------------------------------------------------------------
+// Trend graph
 void myDisplay::Gui6(sensor_data_struct sData)
 {
+  myTFT.fillScreen(TFT_BLACK);
+
+  // title
+  myTFT.setTextColor(TFT_WHITE, TFT_BLACK);
+  myTFT.drawString(sData.co2Char, 100, 35, 4); // string, x,y, font
+  myTFT.drawString("ppm", 190, 35, 4);         // string, x,y, font
+
+  // drawTrend(sData);
+  drawTrendRing(sData);
+
+} // end of function
+
+// ------------------------------------------------------------------------------------------------------------------------
+void myDisplay::drawTrendRing(sensor_data_struct sData)
+{
+  int gx0 = 30; // x = 0
+  static int xPos = gx0 + 1;
+  int gxM = tft_w - 10; // max x
+  int gy0 = tft_h - 10; // y=0
+  int gyM = 35;         // max y
+  int gyH = gy0 - gyM;
+  int iVal = 0;
+  int graphHeight;
+  int iCO2;
+
+  uint32_t lineColor;
+
+
+  // determine y-values
+  int gy1 = gy0 - map(1000, 0, 3000, 0, gyH);
+  int gy2 = gy0 - map(2000, 0, 3000, 0, gyH);
+
+  // y-titles and lines
+  myTFT.drawString("3k", 1, gyM + 4, 2); // string, x,y, font
+  myTFT.drawString("2k", 1, gy2 + 4, 2); // string, x,y, font
+  myTFT.drawString("1k", 1, gy1 + 4, 2); // string, x,y, font
+
+  // X-Axis
+  myTFT.drawLine(gx0, gy0, gxM, gy0, TFT_WHITE);  // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy1, gxM, gy1, TFT_YELLOW); // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy2, gxM, gy2, TFT_RED);    // xs, ys,  xe, ye,  color
+  // y-Axis
+  myTFT.drawLine(gx0, gy0, gx0, gyM, TFT_WHITE); // xs, ys,  xe, ye,  color
+
+  Serial.printf("gx0 %d, gxM %d, gy0 %d, gyM %d, gyH %d\n", gx0, gxM, gy0, gyM, gyH);
+
+  if (sData.co2_ppm <= 1000)
+    lineColor = TFT_GREEN;
+  if (sData.co2_ppm > 1000)
+    lineColor = TFT_YELLOW;
+  if (sData.co2_ppm > 2000)
+    lineColor = TFT_RED;
+
+  for (iVal = 0, xPos = gx0 + 1; xPos < gxM; iVal++, xPos++)
+  {
+    iCO2 = sData.myCo2Buffer[iVal];
+    graphHeight = map(iCO2, 0, 3000, 0, gyH); 
+    // Serial.printf("Line %3d [%4d]: x %d, y0 %d, max %d\n", iVal, iCO2, xPos, gy0 - 1, graphHeight);
+    // myTFT.drawLine(xPos, gy0 - 1, xPos, gy0 - graphHeight, lineColor); // xs, ys,  xe, ye,  color
+    myTFT.drawLine(xPos, gy0 - graphHeight, xPos, gy0 - graphHeight, lineColor); // xs, ys,  xe, ye,  color
+  }
+
+} // end of function
+
+// ------------------------------------------------------------------------------------------------------------------------
+void myDisplay::drawTrend(sensor_data_struct sData)
+{
+
   int gx0 = 30; // x = 0
   static int xPos = gx0 + 1;
   int gxM = tft_w - 10; // max x
@@ -264,16 +333,10 @@ void myDisplay::Gui6(sensor_data_struct sData)
   int gy2 = gy0 - map(2000, 0, 3000, 0, gyH);
   int graphHeight = map(sData.co2_ppm, 0, 3000, 0, gyH);
 
-  // title
-  myTFT.setTextColor(TFT_WHITE, TFT_BLACK);
-  // myTFT.drawString("CO2", 5, 35, 4);   // string, x,y, font
-  myTFT.drawString(sData.co2Char, 100, 35, 4); // string, x,y, font
-  myTFT.drawString("ppm", 190, 35, 4); // string, x,y, font
-
   // y-titles and lines
-  myTFT.drawString("3k", 1, gyM+4, 2); // string, x,y, font
-  myTFT.drawString("2k", 1, gy2+4, 2); // string, x,y, font
-  myTFT.drawString("1k", 1, gy1+4, 2); // string, x,y, font
+  myTFT.drawString("3k", 1, gyM + 4, 2); // string, x,y, font
+  myTFT.drawString("2k", 1, gy2 + 4, 2); // string, x,y, font
+  myTFT.drawString("1k", 1, gy1 + 4, 2); // string, x,y, font
 
   // X-Axis
   myTFT.drawLine(gx0, gy0, gxM, gy0, TFT_WHITE);  // xs, ys,  xe, ye,  color
@@ -293,9 +356,7 @@ void myDisplay::Gui6(sensor_data_struct sData)
     lineColor = TFT_RED;
 
   myTFT.drawLine(xPos, gy0 - 1, xPos, gy0 - graphHeight, lineColor); // xs, ys,  xe, ye,  color
-  // myTFT.line(xPos, TFTscreen.height() - graphHeight, xPos, TFTscreen.height());
 
-  // myTFT.drawLine(120, 30, 120, 120, TFT_WHITE);
 } // end of function
 
 // ------------------------------------------------------------------------------------------------------------------------
