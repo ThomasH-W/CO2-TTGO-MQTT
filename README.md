@@ -21,7 +21,7 @@ In addition you can control the Sensor module as it is subscribing to a specific
 ### GUI 5: graph
 ![GitHub Logo](./images/TTGO-5.jpg)
 
-###GUI 6: Admin page
+### GUI 6: Admin page
 ![GitHub Logo](./images/TTGO-6.jpg)
 
 ### NodeRED
