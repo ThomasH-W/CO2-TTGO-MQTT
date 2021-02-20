@@ -12,43 +12,43 @@ In addition you can control the Sensor module since it is subscribing to a speci
 
 ### GUI 1 - All Sensors
 
-![TTGO-1](images/TTGO-1.jpg)
+![TTGO-1](README/images/TTGO-1.jpg)
 
 Settings for this GUI: mode = 1
 
 ### GUI 2: CO2 + Temperature
 
-![GitHub Logo](images/TTGO-2.jpg)
+![GitHub Logo](README/images/TTGO-2.jpg)
 
 Settings for this GUI: mode = 1
 
 ### GUI 3: CO2 only - color depending on level
 
-![GitHub Logo](/images/TTGO-3.jpg)
+![GitHub Logo](README/images/TTGO-3.jpg)
 
 Settings for this GUI: mode = 3
 
 ### GUI 4: CO2 gauge
 
-![GitHub Logo](images/TTGO-4.jpg)
+![GitHub Logo](README/images/TTGO-4.jpg)
 
 Settings for this GUI: mode = 4
 
 ### GUI 5: graph
 
-![GitHub Logo](./images/TTGO-5.jpg)
+![GitHub Logo](README/images/TTGO-5.jpg)
 
 Settings for this GUI: mode = 5
 
 ### GUI 6: Admin page
 
-![GitHub Logo](./images/TTGO-6.jpg)
+![GitHub Logo](README/images/TTGO-6.jpg)
 
 Settings for this GUI: mode = 6
 
 ### NodeRED
 
-![GitHub Logo](./images/TTGO-NodeRED.png)
+![GitHub Logo](README/images/TTGO-NodeRED.png)
 
 ## CO2 Sensor / MHZ19B
 
