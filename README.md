@@ -36,14 +36,52 @@ The DHT22 is measuring both while using only one wire for data submission. As an
 
 <br><br>
 ## Wiring
+### CO2 Sensor / MHZ19B
+![MHZ19B](./images/TTGO-MHZ19B-PIN.png)
+
+ESP PIN| ESP Name |MHZ19B Name
+-------|----------|-----------
+26	|RX|	TX
+27	|TX|	REX
+GND	|GND|	GND
+5V	|V| Vin
+<br><br>
+### Temp/Humidity Sensor / DHT22
+![DHT22](./images/TTGO-DHT22-PIN.png)
+ESP PIN| ESP Name |DHT22 Name
+-------|----------|-----------
+25	|GPIO25|DATA
+GND	|GND|	GND
+3V3	|Vcc| Vcc
+
 
 
 <br><br>
 ## MQTT
+The name of this device is defined in include/myMqttClient.h.
+Be aware that the name must be unique in your local network.
+### Topics
+- tele/TTGO-1/CO2
+- tele/TTGO-1/info
+- tele/TTGO-1/temp
+- tele/TTGO-1/humi
+- stat/TTGO/result
+- cmnd/TTGO
+### Commands - Message format
+- {"name":"mode","value":3}
 
 <br><br>
 ## Configuration
+### TFT_esPI Library
+You need to select the correct TFT driver in the library, otherwise the screen will just be black.<br>
+Copy the files from 
+- README\TFT_eSPI 
+<br>to <br>
+- .pio\libdeps\TTGO-MQTT-lora32-v1\TFT_eSPI
 
+### WiFi + MQTT Credentials
+Copy included\user_config_override_sample.h to included\user_config_override.h
+Edit the file and inject your credentials.
 
 <br><br>
 ## ToDo
