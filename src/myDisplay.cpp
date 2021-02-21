@@ -248,11 +248,11 @@ void myDisplay::Gui6(sensor_data_struct sData)
 
   // title
   myTFT.setTextColor(TFT_WHITE, TFT_BLACK);
-  myTFT.drawString(sData.co2Char, 100, 35, 4); // string, x,y, font
+  myTFT.drawString(sData.co2Char, 120, 35, 4); // string, x,y, font
   myTFT.drawString("ppm", 190, 35, 4);         // string, x,y, font
 
-  // drawTrend(sData);
-  drawTrendRing(sData);
+  // drawTrend(sData); // bars
+  drawTrendRing(sData); // line
 
 } // end of function
 
@@ -271,36 +271,42 @@ void myDisplay::drawTrendRing(sensor_data_struct sData)
 
   uint32_t lineColor;
 
-
   // determine y-values
   int gy1 = gy0 - map(1000, 0, 3000, 0, gyH);
   int gy2 = gy0 - map(2000, 0, 3000, 0, gyH);
 
   // y-titles and lines
-  myTFT.drawString("3k", 1, gyM + 4, 2); // string, x,y, font
-  myTFT.drawString("2k", 1, gy2 + 4, 2); // string, x,y, font
-  myTFT.drawString("1k", 1, gy1 + 4, 2); // string, x,y, font
+  myTFT.setTextColor(TFT_RED, TFT_BLACK);
+  myTFT.drawString("3k", 2, gyM + 4, 2); // string, x,y, font
+  myTFT.setTextColor(TFT_RED, TFT_BLACK);
+  myTFT.drawString("2k", 2, gy2 + 4, 2); // string, x,y, font
+  myTFT.setTextColor(TFT_YELLOW, TFT_BLACK);
+  myTFT.drawString("1k", 2, gy1 + 4, 2); // string, x,y, font
+  myTFT.drawString("0", 2, gy0 + 4, 2);  // string, x,y, font
 
   // X-Axis
-  myTFT.drawLine(gx0, gy0, gxM, gy0, TFT_WHITE);  // xs, ys,  xe, ye,  color
-  myTFT.drawLine(gx0, gy1, gxM, gy1, TFT_YELLOW); // xs, ys,  xe, ye,  color
-  myTFT.drawLine(gx0, gy2, gxM, gy2, TFT_RED);    // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy0, gxM, gy0, TFT_DARKGREY); // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy1, gxM, gy1, TFT_DARKGREY); // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy2, gxM, gy2, TFT_DARKGREY); // xs, ys,  xe, ye,  color
   // y-Axis
-  myTFT.drawLine(gx0, gy0, gx0, gyM, TFT_WHITE); // xs, ys,  xe, ye,  color
+  myTFT.drawLine(gx0, gy0, gx0, gyM, TFT_DARKGREY); // xs, ys,  xe, ye,  color
 
   Serial.printf("gx0 %d, gxM %d, gy0 %d, gyM %d, gyH %d\n", gx0, gxM, gy0, gyM, gyH);
 
+  /*
   if (sData.co2_ppm <= 1000)
     lineColor = TFT_GREEN;
   if (sData.co2_ppm > 1000)
     lineColor = TFT_YELLOW;
   if (sData.co2_ppm > 2000)
     lineColor = TFT_RED;
+    */
+  lineColor = TFT_BLUE;
 
   for (iVal = 0, xPos = gx0 + 1; xPos < gxM; iVal++, xPos++)
   {
     iCO2 = sData.myCo2Buffer[iVal];
-    graphHeight = map(iCO2, 0, 3000, 0, gyH); 
+    graphHeight = map(iCO2, 0, 3000, 0, gyH);
     // Serial.printf("Line %3d [%4d]: x %d, y0 %d, max %d\n", iVal, iCO2, xPos, gy0 - 1, graphHeight);
     // myTFT.drawLine(xPos, gy0 - 1, xPos, gy0 - graphHeight, lineColor); // xs, ys,  xe, ye,  color
     myTFT.drawLine(xPos, gy0 - graphHeight, xPos, gy0 - graphHeight, lineColor); // xs, ys,  xe, ye,  color
