@@ -100,7 +100,7 @@ This name is used as client-ID for MQTT.
 Be aware that the name / client-ID must be unique in your local network.
 Default name: "TTGO-1"
 
-For the time being, the MQTT user nad password are ignored.
+For the time being, the MQTT username and password are ignored.
 
 ### Topics
 
