@@ -23,7 +23,7 @@
 #undef MQTT_PASS
 #define MQTT_PASS "YourMqttPass" // [MqttPassword] Optional password
 
-#undef MQTT_NAME
-#define MQTT_NAME TTGO
+#undef MQTT_DEVICENAME
+#define MQTT_DEVICENAME "TTGO"
 
 #endif

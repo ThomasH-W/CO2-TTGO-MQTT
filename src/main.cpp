@@ -50,7 +50,6 @@ void click(Button2 &btn);
 
 
 
-
 long lastMsg = 0;
 long lastMsgCo2 = 0;
 char msg[100];
@@ -102,8 +101,8 @@ void setup()
   delay(10);
   setup_wifi();
 
-  myMqttClient2.begin("192.168.178.20", 1883);
-  myMqttClient2.setDeviceName("TTGO");
+  myMqttClient2.begin(MQTT_HOST, MQTT_PORT); // include/defined in user_config_override.h
+  myMqttClient2.setDeviceName(MQTT_DEVICENAME);
 
   buttonA.setClickHandler(click);
   buttonB.setClickHandler(click);

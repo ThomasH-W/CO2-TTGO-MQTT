@@ -23,8 +23,8 @@
 #undef MQTT_PASS
 #define MQTT_PASS "" // [MqttPassword] Optional password
 
-#undef MQTT_NAME
-#define MQTT_NAME TTGO_1234
+#undef MQTT_DEVICENAME
+#define MQTT_DEVICENAME "TTGO_1234"
 
 #ifdef USE_CONFIG_OVERRIDE
   #include "user_config_override.h" // Configuration overrides for my_user_config.h

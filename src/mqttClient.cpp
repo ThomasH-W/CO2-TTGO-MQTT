@@ -36,8 +36,13 @@ void MqttClient2::begin(const char *hostName)
 // ------------------------------------------------------------------------------------------------------------------------
 void MqttClient2::begin(const char *hostName, int portNo)
 {
+  Serial.print("MqttClient::begin>  set mqtt broker to ");
+  Serial.print(hostName);
+  Serial.print(" with port ");
+  Serial.print(portNo);
   client.setServer(hostName, portNo); // define server
   setDeviceName(MQTT_DEVICENAME);     // set default device name
+  Serial.println(" ... done");
 } // end of function
 
 // ------------------------------------------------------------------------------------------------------------------------
@@ -56,6 +61,7 @@ void MqttClient2::loop(void)
 {
   if (!client.connected())
   {
+
     reconnect();
   }
   client.loop();
@@ -182,7 +188,7 @@ void MqttClient2::reconnect(void)
   // Loop until we're reconnected
   while (!client.connected())
   {
-    Serial.print("Attempting MQTT connection...");
+    Serial.printf("Attempting MQTT connection with %s on port %d ... ", MQTT_HOST, MQTT_PORT);
     // Attempt to connect
     String clientId = "ESP32CO2-";
     clientId += String(random(0xffff), HEX);

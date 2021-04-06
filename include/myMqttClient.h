@@ -24,8 +24,9 @@ Methoden
 
 #include <ArduinoJson.h>
 
-#define MQTT_PORT 1883
-#define MQTT_DEVICENAME "TTGO-1"
+#include "user_config.h"
+//#define MQTT_PORT 1883
+//#define MQTT_DEVICENAME "TTGO-1"
 
 struct json_cmnd_struct
 {
