@@ -95,10 +95,12 @@ The DHT22 is measuring both while using only one wire for data submission. As an
 
 ## MQTT
 
-The name of this device is defined in include/myMqttClient.h.
-teh nam eis used as client-ID for MQTT.
+The name of this device is defined in include/user_config.h.
+This name is used as client-ID for MQTT.
 Be aware that the name / client-ID must be unique in your local network.
 Default name: "TTGO-1"
+
+For the time being, the MQTT user nad password are ignored.
 
 ### Topics
 
