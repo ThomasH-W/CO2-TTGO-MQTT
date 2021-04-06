@@ -6,7 +6,6 @@
   ToDo
     - calibration
     - admin data
-    - indicator: WLAN, heartbeat
     - co2 levels - color
 */
 
@@ -43,13 +42,6 @@ int jsonCountOld = 0;
 myDisplay myDisplay1;
 char statusChar[50];
 
-#include "Button2.h"
-Button2 buttonA = Button2(BUTTON_A_PIN);
-Button2 buttonB = Button2(BUTTON_B_PIN);
-void click(Button2 &btn);
-
-
-
 long lastMsg = 0;
 long lastMsgCo2 = 0;
 char msg[100];
@@ -75,6 +67,94 @@ int mode = 0, oldMode = 0; // based on state
 unsigned long previousMillis = 0, previousMillisRssi = 0, intervalRssiLoop = 10000;
 const int RSSI_MAX = -50;  // define maximum strength of signal in dBm
 const int RSSI_MIN = -100; // define minimum strength of signal in dBm
+
+#include <AceButton.h>
+using namespace ace_button;
+const int BUTTON1_PIN = 0;
+const int BUTTON2_PIN = 35;
+AceButton button1(BUTTON1_PIN);
+AceButton button2(BUTTON2_PIN);
+void handleEvent(AceButton *, uint8_t, uint8_t);
+const int LED_PIN = 2; // for ESP32
+
+// --------------------------------------------------------------------------
+// https://github.com/bxparks/AceButton
+// https://github.com/bxparks/AceButton/blob/develop/examples/TwoButtonsUsingOneButtonConfig/TwoButtonsUsingOneButtonConfig.ino
+void setup_button()
+{
+  // Buttons use the built-in pull up register.
+  pinMode(BUTTON1_PIN, INPUT_PULLUP);
+  pinMode(BUTTON2_PIN, INPUT_PULLUP);
+
+  // Configure the ButtonConfig with the event handler, and enable all higher
+  // level events.
+  ButtonConfig *buttonConfig = ButtonConfig::getSystemButtonConfig();
+  buttonConfig->setEventHandler(handleEvent);
+  buttonConfig->setFeature(ButtonConfig::kFeatureClick);
+  buttonConfig->setFeature(ButtonConfig::kFeatureDoubleClick);
+  buttonConfig->setFeature(ButtonConfig::kFeatureLongPress);
+  buttonConfig->setFeature(ButtonConfig::kFeatureRepeatPress);
+
+  // Check if the button was pressed while booting
+  if (button1.isPressedRaw())
+  {
+    Serial.println(F("setup(): button 1 was pressed while booting"));
+  }
+  if (button2.isPressedRaw())
+  {
+    Serial.println(F("setup(): button 2 was pressed while booting"));
+  }
+
+} // end of function
+
+// ----------------------------------------------------------------------------------------
+void switch_mode(int reqMode)
+{
+  if (reqMode > ST_GUI_6)
+    reqMode = ST_GUI_1;
+  else if (reqMode < ST_GUI_1)
+    reqMode = ST_GUI_6;
+
+  Serial.printf("switch_mode>  old=%d new=%d \n", mode, reqMode);
+  mode = reqMode;
+  displayUpdate = true;
+}
+
+// --------------------------------------------------------------------------
+// The event handler for the button.
+void handleEvent(AceButton *button, uint8_t eventType, uint8_t buttonState)
+{
+  int butPressed = button->getPin();
+
+  // Print out a message for all events, for both buttons.
+  Serial.print(F("handleEvent(): pin: "));
+  Serial.print(butPressed);
+  Serial.print(F("; eventType: "));
+  Serial.print(eventType);
+  Serial.print(F("; buttonState: "));
+  Serial.println(buttonState);
+
+  // Control the LED only for the Pressed and Released events of Button 1.
+  // Notice that if the MCU is rebooted while the button is pressed down, no
+  // event is triggered and the LED remains off.
+  switch (eventType)
+  {
+  case AceButton::kEventReleased: // kEventPressed
+    if (butPressed == BUTTON1_PIN)
+    {
+      Serial.printf("handleEvent> GUI for pin %d\n", butPressed);
+      switch_mode(mode + 1);
+    }
+    else if (butPressed == BUTTON2_PIN)
+    {
+      Serial.printf("handleEvent> GUI for pin %d\n", butPressed);
+      switch_mode(mode - 1);
+    }
+    break;
+  default:
+    Serial.printf("handleEvent> unknown for pin %d & %d\n", butPressed, eventType);
+  }
+} // end of function
 
 // ----------------------------------------------------------------------------------------
 void setup()
@@ -104,8 +184,7 @@ void setup()
   myMqttClient2.begin(MQTT_HOST, MQTT_PORT); // include/defined in user_config_override.h
   myMqttClient2.setDeviceName(MQTT_DEVICENAME);
 
-  buttonA.setClickHandler(click);
-  buttonB.setClickHandler(click);
+  setup_button();
 
   myDisplay1.print("> NTP ");
   myNtp.begin();
@@ -356,24 +435,6 @@ int dBmtoPercentage(int dBm)
 } // end of fuction dBmtoPercentage
 
 // ----------------------------------------------------------------------------------------
-void click(Button2 &btn)
-{
-  if (btn == buttonA)
-  {
-    Serial.print("A clicked, ");
-    mode++;
-    if (mode > ST_MAX)
-      mode = ST_BOOT;
-    Serial.print("new mode: ");
-    Serial.println(mode);
-  }
-  else if (btn == buttonB)
-  {
-    Serial.println("B clicked");
-  }
-} // end of fuction
-
-// ----------------------------------------------------------------------------------------
 void pullData_loop()
 {
   long now = millis();
@@ -426,8 +487,8 @@ void loop()
   mqttcmd_loop();       // fetch + process data for subsribed mqtt topics
   // AsyncElegantOTA.loop();
 
-  buttonA.loop();
-  buttonB.loop();
+  button1.check();
+  button2.check();
 
   displayLoop(); // mqtt of button may demand to change GUI
 
