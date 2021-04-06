@@ -8,7 +8,7 @@
 #undef STA_SSID1
 #define STA_SSID1 "YourSSID" // [Ssid1] Wifi SSID
 #undef STA_PASS1
-#define STA_PASS1 "YourWifiPassword" / [Password1] Wifi password
+#define STA_PASS1 "YourWifiPassword" // [Password1] Wifi password
 
 // -- Setup your own MQTT settings  ---------------
 #undef MQTT_HOST
