@@ -6,6 +6,7 @@
 #include "Arduino.h"
 #include "myMqttClient.h"
 
+// ------------------------------------------------------------------------------------------------------------------------
 // Outside of class
 MqttClient2 *pointerToMqttClass; // declare a pointer to testLib class
 
@@ -182,9 +183,11 @@ json_cmnd_struct MqttClient2::command(void)
   return json_cmnd;
 } // end of function
 
-// ------------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------john for highlithin-------------------------------------------------------------
+// initial version did miss to user/pw if defined - thanks for John for reminding me
 void MqttClient2::reconnect(void)
 {
+  bool mqtt_rc = false;
   // Loop until we're reconnected
   while (!client.connected())
   {
@@ -192,8 +195,18 @@ void MqttClient2::reconnect(void)
     // Attempt to connect
     String clientId = "ESP32CO2-";
     clientId += String(random(0xffff), HEX);
-    // if (client.connect(clientId.c_str(), mqtt_user,mqtt_password))
-    if (client.connect(clientId.c_str()))
+    if (strlen(MQTT_USER) > 0)
+    {
+      Serial.printf("Attempting MQTT connection with %s on port %d with user %d... ", MQTT_HOST, MQTT_PORT, MQTT_USER);
+      mqtt_rc = client.connect(clientId.c_str(), MQTT_USER, MQTT_PASS);
+    }
+    else
+    {
+      Serial.printf("Attempting MQTT connection with %s on port %d without user/password... ", MQTT_HOST, MQTT_PORT);
+      mqtt_rc = client.connect(clientId.c_str());
+    }
+
+    if (mqtt_rc == true)
     {
       Serial.println("connected");
       subscribe();

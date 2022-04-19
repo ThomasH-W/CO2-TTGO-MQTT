@@ -12,10 +12,11 @@
 
 #define ADC_EN 14 //ADC_EN is the ADC detection enable port
 #define ADC_PIN 34
-#define BUTTON_1 35
-#define BUTTON_2 0
-#define BUTTON_A_PIN 35
-#define BUTTON_B_PIN 0
+
+/*
+#define BUTTON_1 35 //
+#define BUTTON_2 0  //
+*/
 
 #define LOOP_SECONDS_DATA 20
 

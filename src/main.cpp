@@ -70,8 +70,8 @@ const int RSSI_MIN = -100; // define minimum strength of signal in dBm
 
 #include <AceButton.h>
 using namespace ace_button;
-const int BUTTON1_PIN = 0;
-const int BUTTON2_PIN = 35;
+const int BUTTON1_PIN = 0;  // mode+
+const int BUTTON2_PIN = 35; // mode -
 AceButton button1(BUTTON1_PIN);
 AceButton button2(BUTTON2_PIN);
 void handleEvent(AceButton *, uint8_t, uint8_t);
