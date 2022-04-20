@@ -3,6 +3,15 @@
     Date  2022-04-20
     Version 0.3
 
+  github: https://github.com/ThomasH-W/CO2-TTGO-MQTT
+
+  Two good German resources which helped me to get started:
+
+    https://unsinnsbasis.de/co2-sensor-mhz19b/
+    http://steinlaus.de/stinkt-das-hier-teil-2-mit-dem-winsen-mh-z19b/#comment-18510
+
+  It is important to run a calibration regulary as explained in the above articles.
+
   ToDo
     - calibration
     - admin data
@@ -212,9 +221,8 @@ void setup_wifi()
     delay(500);
   }
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    request->send(200, "text/plain", "Hi! I am ESP32.");
-  });
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/plain", "Hi! I am ESP32."); });
 
   AsyncElegantOTA.begin(&server); // Start ElegantOTA
   server.begin();
@@ -390,7 +398,7 @@ void displayLoop(void)
       Serial.print("caliTime: ");
       Serial.println(caliTime);
       myDisplay1.GuiCalibration(caliTime); // gauge design test
-      break;                               //default:
+      break;                               // default:
       // myDisplay1.Text(co2simChar, tempChar);
     }
     mqttUpdate = false;
@@ -402,7 +410,7 @@ void displayLoop(void)
 /*
  * Written by Ahmad Shamshiri
   * with lots of research, this sources was used:
- * https://support.randomsolutions.nl/827069-Best-dBm-Values-for-Wifi 
+ * https://support.randomsolutions.nl/827069-Best-dBm-Values-for-Wifi
  * This is approximate percentage calculation of RSSI
  * WiFi Signal Strength Calculation
  * Written Aug 08, 2019 at 21:45 in Ajax, Ontario, Canada
@@ -464,7 +472,7 @@ void pullData_loop()
     displayDebugPrint("> Wifi.RSSI: ");
     sensorData.rssiLevel = dBmtoPercentage(WiFi.RSSI());
     dtostrf(sensorData.rssiLevel, 1, 0, sensorData.rssiChar); // 5 digits, no decimal
-    displayDebugPrintln(sensorData.rssiChar);                 //Signal strength in %
+    displayDebugPrintln(sensorData.rssiChar);                 // Signal strength in %
 
     displayUpdate = true;
     lastMsgCo2 = millis();
@@ -483,7 +491,7 @@ void loop()
 
   pullData_loop(); // retrieve update form sensors every 20 seconds
 
-  myMqttClient2.loop(); //client.loop(); + reconnect if required
+  myMqttClient2.loop(); // client.loop(); + reconnect if required
   mqttcmd_loop();       // fetch + process data for subsribed mqtt topics
   // AsyncElegantOTA.loop();
 
