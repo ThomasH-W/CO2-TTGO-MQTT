@@ -28,7 +28,8 @@ myDHT myDHT22;
 
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <AsyncElegantOTA.h>
+// #include <AsyncElegantOTA.h>
+#include <ElegantOTA.h>
 AsyncWebServer server(80);
 
 #include <ArduinoJson.h>
@@ -224,7 +225,8 @@ void setup_wifi()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/plain", "Hi! I am ESP32."); });
 
-  AsyncElegantOTA.begin(&server); // Start ElegantOTA
+  // AsyncElegantOTA.begin(&server); // Start ElegantOTA
+  ElegantOTA.begin(&server); // Start ElegantOTA
   server.begin();
   Serial.println("HTTP server started");
 
